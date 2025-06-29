@@ -1,0 +1,29 @@
+# Ignore all text files in the current directory
+memo
+*.pyc
+*.pyo
+*db
+*.sqlite3
+*.csv
+
+# 환경 설정 파일
+.env
+
+# Docker 관련
+docker-compose.override.yml
+.dockerignore
+
+
+# Node.js 관련 (Next.js)
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+
+# IDE 관련
+.vscode/
+.idea/
+
+# OS 관련
+.DS_Store
+Thumbs.db
+

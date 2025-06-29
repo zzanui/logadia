@@ -1,0 +1,9 @@
+django
+djangorestframework
+psycopg2
+redis
+celery
+pandas
+django-filter
+django-cors-headers
+Pillow
