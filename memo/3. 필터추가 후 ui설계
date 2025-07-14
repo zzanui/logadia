@@ -1,0 +1,50 @@
+✅ 1. 패키지 설치 (django-filter)
+먼저 필터링 기능을 쓰기 위해 django-filter를 설치해야 합니다:
+
+pip install django-filter
+그리고 settings.py에 등록합니다:
+
+INSTALLED_APPS = [
+    ...
+    'rest_framework',
+    'django_filters',  # ✅ 필터 기능 추가
+]
+또한 DRF 설정에 필터 백엔드 등록도 필요합니다:
+
+# settings.py
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
+✅ 2. ViewSet에 필터 필드 지정
+items/views.py에서 ItemViewSet에 필터할 필드들을 지정합니다:
+
+from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
+from .models import Item
+from .serializers import ItemSerializer
+
+class ItemViewSet(viewsets.ModelViewSet):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+
+    # ✅ 필터링 추가
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+
+    filterset_fields = ['category', 'stage_name', 'entry_level', 'binding']  # exact match
+    ordering_fields = ['quantity', 'entry_level']  # 정렬용
+    search_fields = ['item_name', 'stage_name']    # 부분 검색용
+✅ 3. 사용 예시 (쿼리 파라미터로 필터링)
+서버 실행 후 브라우저나 Postman에서 다음과 같이 요청하면 필터링이 동작합니다:
+
+🔍 필터링 (exact match)
+/api/items/?category=가디언 토벌
+/api/items/?binding=O
+
+🔍 여러 조건 필터링
+/api/items/?category=가디언 토벌&binding=X
+
+🔎 부분 검색 (like)
+/api/items/?search=보석
+
+🔢 정렬
+/api/items/?ordering=-quantity

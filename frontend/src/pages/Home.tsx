@@ -1,5 +1,5 @@
 import { useCategoryContext } from '@/contexts/CategoryContext';
-import Card from '@/components/Card'
+import HomeCard from '@/components/HomeCard'
 
 const Home: React.FC = () => {
   const { categories } = useCategoryContext()
@@ -14,7 +14,7 @@ const Home: React.FC = () => {
   return (
     <main className="px-4 py-8 flex flex-wrap justify-center gap-8">
       {cardData.map((card, idx) => (
-        <Card key={idx} {...card} />
+        <HomeCard key={idx} {...card} />
       ))}
     </main>
   )

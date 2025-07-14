@@ -7,11 +7,10 @@ class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
 
+    # 필터링, 정렬, 검색 기능을 추가
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-
-
-    filterset_fields = ['category', 'stage_name', 'entry_level', 'item_name']
-    ordering_fields = ['quantity', 'entry_level']
+    filterset_fields = [ 'ko_neame', 'en_name', 'tear']
+    ordering_fields = [ 'id', 'tear']
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -25,7 +24,8 @@ class GadianViewSet(viewsets.ModelViewSet):
     queryset = Gadian.objects.all()
     serializer_class = GadianSerializer
 
+    # 필터링, 정렬, 검색 기능을 추가
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     filterset_fields = ['ko_name', 'en_name', 'level', 'kind', 'stage']
-    ordering_fields = ['ko_name', 'en_name', 'level']
-    search_fields = ['ko_name', 'en_name']
+    ordering_fields = ['id', 'level', 'stage']
+    search_fields = ['ko_name', 'en_name','activation']

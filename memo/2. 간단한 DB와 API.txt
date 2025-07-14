@@ -1,0 +1,94 @@
+setting에서 splite를 postgres로 변경
+
+
+import os
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
+    }
+}
+
+.env파일에 db에 관련되어있는 정보를 환경변수로 넣어주었으므로 우리는 os.environ.get()를 사용하여 환경변수에 존재하는 DB관련 정보를 가져오기만 하면 됩니다.
+
+임시데이터를 사용하기 위해 csv파일을 읽어 db에 적재할 load_csv파일을 작성
+
+import pandas as pd
+from items.models import Item
+
+def load_csv_to_db(file_path):
+    df = pd.read_csv(file_path)
+    for _, row in df.iterrows():
+        Item.objects.create(
+            category=row['category'],
+            stage_name=row['stage_name'],
+            stage_level=int(row['stage_level']),
+            entry_level=int(row['entry_level']),
+            item_name=row['item_name'],
+            quantity=int(str(row['quantity']).replace(',', '')),
+            binding=row['binding']
+        )
+    print("CSV 데이터베이스 적재 완료")
+
+models.py에서 작성한 테이블 컬럼과 적재 할 csv파일의 컬럼을 비교하여 작성
+
+셀스크립트를 사용해 load_csv를 작동시켜 db에 데이터를 적재
+
+명령어
+python manage.py shell
+from items.load_csv import load_csv_to_db
+load_csv_to_db("csv파일")
+
+DBEAVER 화면
+
+시리얼라이저 생성
+from rest_framework import serializers
+from .models import Item
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = '__all__'
+
+뷰 생성
+from rest_framework import viewsets
+from .models import Item
+from .serializers import ItemSerializer
+
+class ItemViewSet(viewsets.ModelViewSet):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+
+
+iteams.url 라우팅
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import ItemViewSet
+
+router = DefaultRouter()
+router.register(r'items', ItemViewSet)
+
+urlpatterns = [
+    path('', include(router.urls)),
+]
+
+project.urls 
+from django.contrib import admin
+from django.urls import path, include
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include('items.urls')),
+]
+
+localhost:8000/api/items로 접근하여 값을 반환하는지 확인
+
+에러발생
+raise TemplateDoesNotExist(template_name, chain=chain)
+INSTALLED_APPS에 restframework 추가하여 해결
+
+swagger 사용이유알아보기

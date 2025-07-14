@@ -25,7 +25,6 @@ const Header: React.FC = () => {
                     <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
 
                         {categories.map((category) => {
-                            console.log(category)
                             const path = '/' + category.en_name.toLowerCase().replace(/\s+/g, '-')
                             const isActive = location.pathname === path
 

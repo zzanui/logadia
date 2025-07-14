@@ -17,10 +17,10 @@ export const fetchCategories = async () => {
 }
         
 
-// 가디언리스트를 API로부터 받아오는 로직
+// 활성화 되어있는 가디언리스트를 API로부터 id의 역순으로 받아오는 로직(?ordering=-id)
 export const fetchGadian = async () => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/gadian/`);
+        const response = await fetch(`${API_BASE_URL}/api/gadians/?ordering=-id&search=true`);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -29,5 +29,6 @@ export const fetchGadian = async () => {
     } 
     catch (error) {
         console.error('Error fetching gadian:', error);
+        return [];
     }
 }

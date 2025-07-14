@@ -1,0 +1,6 @@
+지난 한달동안 docker 컨테이너 환경에서 진행해보고자 노력했지만 이 이상 이것만 알아보면 의욕이 전혀 날 것 같지 않아 다음으로 넘긴다.
+버전에 대한 문제인 것인가 vite와 맞지 않는 것 인가 아니면 node_modules에 있는 것들이 문제인 것인가 이것을 명확하게 알아내기 전 까지는 활용하기 어려울 것 같다.
+
+설치참조 url
+https://aquaheyday.tistory.com/entry/React-React-Vite-TypeScript-TailwindCSS-%EC%84%A4%EC%B9%98-%EB%B0%A9%EB%B2%95 
+윈도우에서 node 22 버전에서 현재 최신버전인 tailwind 4 를 설치시 설정 파일 생성이 안되는 오류가 있어 3버전으로 진행합니다.

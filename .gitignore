@@ -1,5 +1,5 @@
 # Ignore all text files in the current directory
-memo
+ memo
 *.pyc
 *.pyo
 *db
@@ -8,6 +8,9 @@ memo
 
 # 환경 설정 파일
 .env
+
+# Node.
+insertDB/
 
 # Docker 관련
 docker-compose.override.yml
@@ -18,7 +21,7 @@ docker-compose.override.yml
 frontend/node_modules/
 frontend/.next/
 frontend/.env.local
-
+frontend/dist/
 # IDE 관련
 .vscode/
 .idea/
