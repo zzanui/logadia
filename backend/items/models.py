@@ -106,3 +106,18 @@ class GadianItemHistory(models.Model):
     created_at = models.DateTimeField(null=True)#생성일시
     def __str__(self):
         return f"{self.Gadian.ko_name} | {self.item.ko_name} | {self.created_at.strftime('%Y-%m-%d')}"
+
+
+#15분마다 추가됨
+class ActionItem(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.PROTECT)#아이템
+    grade = models.CharField(max_length=50)#등급
+    bundleCount = models.IntegerField(default=1)
+    trade_remain_count = models.CharField(max_length=50, null=True)#등급
+    y_day_avg_price = models.FloatField() #어제 평균가
+    recent_price = models.FloatField()#최근 거래가 
+    current_min_price = models.FloatField()#현재 최저가 !!중요!!
+    created_at = models.DateTimeField(auto_now_add=True)#생성일시
+ 
+    def __str__(self):
+        return f"{self.item.ko_name} | {self.current_min_price}"

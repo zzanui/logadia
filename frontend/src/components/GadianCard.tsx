@@ -1,54 +1,115 @@
+import { useState, useEffect } from 'react'
+import RewardCard from './RewardCard'
+
+type Reward = {
+  item_name: string
+  item_image: string
+  item_count: number
+  calculated_price: number
+}
+
 interface CardProps {
   ko_name: string
   level: string
   vulnerable_properties: string
   kind: string
   stage: string
-  items: string[]
+  items: Reward[]
   image: string
 }
+ 
+const GadianCard: React.FC<CardProps> = ({
+  ko_name,
+  level,
+  vulnerable_properties,
+  kind,
+  stage,
+  items = [],
+  image
+}) => {
+  // const [selected, setSelected] = useState<boolean[]>([])//아이템 체크박스
+  const [selected, setSelected] = useState<boolean[]>([])//아이템 체크박스
+  const [useRestGauge, setUseRestGauge] = useState<boolean>(false)// 휴식게이지 여부 체크박스
 
-const GadianCard: React.FC<CardProps> = (props) => {
-    const {
-        ko_name,
-        level,
-        vulnerable_properties,
-        kind,
-        stage,
-        items=[],
-        image
-    } = props
+  // 아이템 초기체크 설정
+  useEffect(() => {
+    setSelected(new Array(items.length).fill(true))
+  }, [items])
 
-   return (
-  <div className="max-w-4xl w-full flex bg-white shadow-md rounded-lg overflow-hidden border border-gray-300">
-    {/* Left image section */}
-    <div
-      className="w-48 h-auto flex-none bg-cover bg-center"
-      style={{ backgroundImage: `url(${image})` }}
-      title={ko_name}
-    ></div>
+  const toggleCheck = (index: number) => {
+    setSelected((prev) => {
+      const copy = [...prev]
+      copy[index] = !copy[index]
+      return copy
+    })
+  }
 
-    {/* Middle content section */}
-    <div className="p-4 flex-grow flex flex-col justify-between leading-normal">
-      <div>
-        <div className="text-gray-900 font-bold text-xl mb-1">{ko_name}</div>
-        <p className="text-gray-700 text-sm mb-1">{kind}: {stage}</p>
-        <p className="text-gray-700 text-sm mb-1">레벨: {level}</p>
-        <p className="text-gray-700 text-sm mb-1">약점 속성: {vulnerable_properties}</p>
+  const totalPrice = items.reduce((sum, item, idx) => {
+    if (!selected[idx]) return sum
+    const price = useRestGauge ? item.calculated_price * 2 : item.calculated_price
+    return sum + price
+  }, 0)
+
+
+  return (
+    <div className="max-w-6xl w-full flex bg-white shadow-md rounded-lg overflow-hidden border border-gray-300">
+      {/*좌측 이미지 */}
+      <div
+        className="w-80 h-auto flex-none bg-cover bg-center"
+        style={{ backgroundImage: `url(${image})` }}
+        title={ko_name}
+      ></div>
+
+      {/* 중앙 가디언정보 */}
+      <div className="p-4 flex-grow flex flex-col justify-between leading-normal">
+        <div>
+          <div className="text-gray-900 font-bold text-xl mb-1">{ko_name}</div>
+          <p className="text-gray-700 text-sm mb-1">{kind}: {stage}</p>
+          <p className="text-gray-700 text-sm mb-1">레벨: {level}</p>
+          <p className="text-gray-700 text-sm mb-1">약점 속성: {vulnerable_properties}</p>
+
+          </div>
+            <label className="mt-2 text-sm text-gray-700 flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={useRestGauge}
+                onChange={(e) => setUseRestGauge(e.target.checked)}
+              />
+              휴식 게이지 사용
+            </label>
+      </div>
+
+      {/* 오른쪽: 보상 카드 목록 */}
+      <div className="p-4 flex-[3] border-l border-gray-200">
+        <p className="text-sm font-semibold text-gray-800 mb-1">보상 아이템</p>
+        <div className="flex flex-col gap-2">
+          {items.map((item, index) => {
+            const adjustedCount = useRestGauge ? item.item_count * 2 : item.item_count
+            const adjustedPrice = useRestGauge ? item.calculated_price * 2 : item.calculated_price
+
+            return (
+              <RewardCard
+                key={index}
+                name={item.item_name}
+                image={item.item_image}
+                count={adjustedCount}
+                price={adjustedPrice}
+                checked={selected[index]}
+                onCheck={() => toggleCheck(index)}
+              />
+            )
+          })}
+        </div>
+
+
+        <div className="mt-4 text-right text-sm text-gray-700 font-semibold">
+          총 골드: {totalPrice.toLocaleString()}G
+        </div>
       </div>
     </div>
-
-    {/* Right content section */}
-    <div className="p-4 w-64 flex-shrink-0 border-l border-gray-200">
-      <p className="text-sm font-semibold text-gray-800 mb-1">보상 아이템</p>
-      <ul className="list-disc list-inside text-sm text-gray-700">
-        {items.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ul>
-    </div>
-  </div>
-);
+  )
 }
 
 export default GadianCard
+// 아이템 아이콘 추가, 카드 넓이 조정, 골드 총합, 계산하는데 필요한 체크박스, 휴식게이지 여부
+//db 페이징 추가, 재료 검색 추가, 사진조정

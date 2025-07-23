@@ -13,7 +13,6 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
-
 class GadianSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(required=False)
 
