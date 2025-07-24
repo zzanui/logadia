@@ -53,6 +53,8 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     # 'DEFAULT_fILTER_BACKEND': ['django_filters.rest_framework.DjangoFilterBackend']
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10  # 한 페이지에 10개씩
 }
 
 CORS_ALLOW_ALL_ORIGINS = True

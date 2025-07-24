@@ -111,5 +111,3 @@ const GadianCard: React.FC<CardProps> = ({
 }
 
 export default GadianCard
-// 아이템 아이콘 추가, 카드 넓이 조정, 골드 총합, 계산하는데 필요한 체크박스, 휴식게이지 여부
-//db 페이징 추가, 재료 검색 추가, 사진조정

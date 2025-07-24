@@ -1,75 +1,66 @@
-
+import { useEffect, useState, useRef } from 'react'
 import GadianCard from '@/components/GadianCard'
-import { GadianProvider } from '@/contexts/GadianContext';
-import { useEffect, useState } from 'react';
-import {fetchGadian, fetchGadianRewards} from '@/api/api';
+import { fetchGadiansPage, fetchGadianRewards } from '@/api/api'
 
-//프론트에서 필터링을 위해 사용하는 가디언 타입 정의
-// 보상 아이템을 별도의 보상 카드를 만들어 추가 -> 낭비가 심하다 가디언카드에 보상칸을 같이 만들자
-// 5개 이상의 가디언을 보고싶은 경우 더보기 버튼 추가
+const Gadian = () => {
+  const [gadians, setGadians] = useState<any[]>([])
+  const [page, setPage] = useState(1)
+  const [hasNext, setHasNext] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const didInitRef = useRef(false)
 
+  const loadMoreGadians = async (targetPage?: number) => {
+    if (loading || !hasNext) return
+    setLoading(true)
 
+    const nextPage = targetPage ?? page
 
-type Gadian = {
-  id: number
-  ko_name: string
-  level: string
-  vulnerable_properties: string
-  kind: string
-  stage: string
-  imageUrl: string
-}
+    try {
+      const data = await fetchGadiansPage(nextPage)
+      const gadianList = data.results || data
 
+      // 각 가디언에 대해 보상 정보 fetch
+      const gadiansWithRewards = await Promise.all(
+        gadianList.map(async (gadian: any) => {
+          const items = await fetchGadianRewards(gadian.id)
+          return { ...gadian, items }
+        })
+      )
 
-// 리 월~드를 받아야게쮜?
-type Reward = {
-  gadian_id: number
-  item_name: string
-  item_image: string
-  item_count: number
-  calculated_price: number
-}
-
-type GadianWithItems = Gadian & { items: Reward[] }
-
-const Gadian: React.FC = () => {
-  // 가디언 데이터를 저장할 상태 변수
-  const [gadiansData, setGadiansData] = useState<GadianWithItems []>([]);
-
-  // 초기화 시 가디언 데이터를 가져오는 함수
-  useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        const gadians: Gadian[] = await fetchGadian()
-
-        const withItems: GadianWithItems[] = await Promise.all(
-          gadians.map(async (gadian) => {
-            const rewards: Reward[] = await fetchGadianRewards(gadian.id)
-            return { ...gadian, items: rewards }
-          })
-        )
-
-        setGadiansData(withItems)
-      } catch (err) {
-        console.error('가디언 데이터 전체 로딩 실패', err)
-      }
+      setGadians((prev) => [...prev, ...gadiansWithRewards])
+      setPage(nextPage + 1)
+      setHasNext(!!data.next)
+    } catch (err) {
+      console.error('로드 실패:', err)
+    } finally {
+      setLoading(false)
     }
-
-    fetchAll()
-  }, [])
- 
-
-
-  
-  return (
-    <GadianProvider>
-      <main className="px-4 py-8 flex flex-wrap justify-center gap-8">
-        {gadiansData.map((card, idx) => (
-          <GadianCard key={idx} {...card} /> 
-        ))}
-      </main>
-    </GadianProvider>
-    )
   }
+
+  useEffect(() => {
+    if (!didInitRef.current) {
+      loadMoreGadians(1)
+      didInitRef.current = true
+    }
+  }, [])
+
+  return (
+    <div className="flex flex-col items-center gap-6">
+      {gadians.map((gadian) => (
+        <GadianCard key={gadian.id} {...gadian} />
+      ))}
+
+      {hasNext && (
+        <button
+          onClick={() => loadMoreGadians()}
+          disabled={loading}
+          className="px-4 py-2 mt-4 bg-blue-600 text-white rounded"
+        >
+          {loading ? '불러오는 중...' : '더 보기'}
+        </button>
+      )}
+    </div>
+  )
+}
 
 export default Gadian
