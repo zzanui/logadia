@@ -54,3 +54,35 @@ export const fetchGadianRewards = async (gadianId: number)=>{
         return [];
     }
 }
+
+
+// 검색한 아이템을 API로부터 받아오는 로직 //1004 #여차의 경우 페이지 추가
+export const searchItemAverage = async (itemName: string) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/search/?item_name=${encodeURIComponent(itemName)}`);
+        if (!response.ok) {
+            throw new Error('검색실패:1004');
+        }
+        const itemResult = await response.json();
+        return itemResult;
+    } catch (error) {
+        console.error(`Error searching items 1004 : ${itemName}:`, error);
+        return [];
+    }
+}
+
+// 아이템 검색 시 자동완성 기능을 위한 API 호출 로직 //1005
+export const fetchItemSuggestions = async (keyword: string) => {
+  try {
+          const response = await fetch(`${API_BASE_URL}/api/autocomplete/?item_keyword=${encodeURIComponent(keyword)}`);
+          if (!response.ok) {
+              throw new Error('검색실패:1005');
+          }
+          const itemResult = await response.json();
+          return itemResult;
+      } catch (error) {
+          console.error(`Error searching items 1005 : ${keyword}:`, error);
+          return [];
+      }
+}
+

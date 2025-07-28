@@ -54,11 +54,13 @@ const GadianCard: React.FC<CardProps> = ({
   return (
     <div className="max-w-6xl w-full flex bg-white shadow-md rounded-lg overflow-hidden border border-gray-300">
       {/*좌측 이미지 */}
-      <div
-        className="w-80 h-auto flex-none bg-cover bg-center"
-        style={{ backgroundImage: `url(${image})` }}
-        title={ko_name}
-      ></div>
+      <div className="w-80 flex-none bg-black flex justify-center items-center overflow-hidden">
+        <img
+          src={image}
+          alt={ko_name}
+          className="w-full h-full object-contain"
+        />
+      </div>
 
       {/* 중앙 가디언정보 */}
       <div className="p-4 flex-grow flex flex-col justify-between leading-normal">

@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.db.models import OuterRef, Subquery, Q
 
 from .models import Item, Category, Gadian, GadianItemAverage, ActionItem
-from .serializers import ItemSerializer, CategorySerializer, GadianSerializer
+from .serializers import ItemSerializer, CategorySerializer, GadianSerializer, GadianItemAverageSerializer
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -14,7 +14,7 @@ class ItemViewSet(viewsets.ModelViewSet):
 
     # 필터링, 정렬, 검색 기능을 추가
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    filterset_fields = [ 'ko_neame', 'en_name', 'tear']
+    filterset_fields = [ 'ko_name', 'en_name', 'tear']
     ordering_fields = [ 'id', 'tear']
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -34,7 +34,7 @@ class GadianViewSet(viewsets.ModelViewSet):
     ordering_fields = ['id', 'level', 'stage']
     search_fields = ['ko_name', 'en_name','activation']
 
-
+#예상 보상골드 가격 책정api
 class GadianItemPriceInfoView(APIView):
     def get(self, request):
         gadian_ids = request.query_params.getlist('gadian_id')
@@ -76,3 +76,24 @@ class GadianItemPriceInfoView(APIView):
                 })
 
         return Response(results)
+    
+# 아이템 검색 시 해당 아이템의 획득처를 반환하는 API
+class SearchItemAverageView(APIView):
+    def get(self, request):
+        query = request.GET.get("item_name", "")
+        if not query:
+            return Response({"error": "item_name 쿼리가 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+        # 아이템 이름으로 필터링
+        results = GadianItemAverage.objects.filter(item__ko_name=query)
+        serializer = GadianItemAverageSerializer(results, many=True)
+        return Response(serializer.data)
+    
+
+# 아이템 자동완성 기능을 위한 API
+class ItemAutoCompleteView(APIView):
+    def get(self, request):
+        keyword = request.query_params.get("item_keyword", "")
+        if not keyword:
+            return Response([])
+        matches = Item.objects.filter(ko_name__icontains=keyword).values_list("ko_name", flat=True)[:10]
+        return Response(matches)

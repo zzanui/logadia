@@ -14,8 +14,6 @@ class Item(models.Model):
     tear = models.CharField(max_length=20, blank=True, null=True)  
     image = models.ImageField(upload_to='items/', blank=True, null=True)
 
-
-
     def __str__(self):
         return f"{self.ko_name}"
 
@@ -40,7 +38,8 @@ class Category(models.Model):
 # 이미지, 
 # 활성화여부
 """
-class Gadian(models.Model):
+class Gadian(models.Model):#콘텐츠로 변경 # 카테고리 추가
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True, blank=True)  # 카테고리 외래키
     ko_name = models.CharField(max_length=50)
     en_name = models.CharField(max_length=50, blank=True)
     level = models.IntegerField()
@@ -66,7 +65,7 @@ class Gadian(models.Model):
 """
 #데이터가 없으므로 임시로 4티어 가디언만 임시로 데이터 축적하자, 매일매일 데이터 축적 테이블에서 평균을 구한 후 평균값을 도출 한 후 보상테이블에 추가하는 방식으로 진행 
 class GadianItemAverage(models.Model):
-    gadian = models.ForeignKey(Gadian , on_delete=models.PROTECT)
+    gadian = models.ForeignKey(Gadian , on_delete=models.PROTECT)#콘텐츠로 변경
     item = models.ForeignKey(Item, on_delete=models.PROTECT)  
     average_count = models.IntegerField()  # 아이템 개수
     binding = models.BooleanField(default=False)  # 아이템 귀속여부
