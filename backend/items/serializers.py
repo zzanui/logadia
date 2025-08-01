@@ -30,3 +30,17 @@ class GadianItemAverageSerializer(serializers.ModelSerializer):
         model = GadianItemAverage
         fields = '__all__'
         read_only_fields = ['gadian', 'item', 'average_count', 'binding']
+
+
+class ItemAutoCompleteSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Item
+        fields = ['ko_name', 'image']
+
+    def get_image(self, obj):
+        request = self.context.get('request')
+        if obj.image:
+            return request.build_absolute_uri(obj.image.url) if request else obj.image.url
+        return None

@@ -2,10 +2,10 @@ from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import OuterRef, Subquery, Q
+from django.db.models import OuterRef, Subquery, Max
 
 from .models import Item, Category, Gadian, GadianItemAverage, ActionItem
-from .serializers import ItemSerializer, CategorySerializer, GadianSerializer, GadianItemAverageSerializer
+from .serializers import ItemSerializer, CategorySerializer, GadianSerializer, GadianItemAverageSerializer, ItemAutoCompleteSerializer
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -25,14 +25,15 @@ class CategoryViewSet(viewsets.ModelViewSet):
     ordering_fields = ['category']
 
 class GadianViewSet(viewsets.ModelViewSet):
-    queryset = Gadian.objects.all()
+    queryset = Gadian.objects.filter(activation=True)# 활성화된 콘텐츠만 조회 
     serializer_class = GadianSerializer
 
     # 필터링, 정렬, 검색 기능을 추가
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    filterset_fields = ['ko_name', 'en_name', 'level', 'kind', 'stage']
+    filterset_fields = ['category_id', 'ko_name', 'en_name', 'level', 'kind', 'stage']
     ordering_fields = ['id', 'level', 'stage']
-    search_fields = ['ko_name', 'en_name','activation']
+    search_fields = ['ko_name', 'en_name']
+
 
 #예상 보상골드 가격 책정api
 class GadianItemPriceInfoView(APIView):
@@ -78,14 +79,26 @@ class GadianItemPriceInfoView(APIView):
         return Response(results)
     
 # 아이템 검색 시 해당 아이템의 획득처를 반환하는 API
-class SearchItemAverageView(APIView):
+class SearchItemAverageView(APIView):#여기 수정
     def get(self, request):
         query = request.GET.get("item_name", "")
         if not query:
             return Response({"error": "item_name 쿼리가 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
         # 아이템 이름으로 필터링
         results = GadianItemAverage.objects.filter(item__ko_name=query)
-        serializer = GadianItemAverageSerializer(results, many=True)
+
+        #최신 날짜 기준으로 필터링
+        latest_date_subquery = (
+            GadianItemAverage.objects
+            .filter(item=OuterRef('item'))
+            .values('item')
+            .annotate(latest_date=Max('date'))
+            .values('latest_date')[:1]
+        )
+
+        latest_records = results.filter(date=Subquery(latest_date_subquery))
+        
+        serializer = GadianItemAverageSerializer(latest_records, many=True)
         return Response(serializer.data)
     
 
@@ -95,5 +108,7 @@ class ItemAutoCompleteView(APIView):
         keyword = request.query_params.get("item_keyword", "")
         if not keyword:
             return Response([])
-        matches = Item.objects.filter(ko_name__icontains=keyword).values_list("ko_name", flat=True)[:10]
-        return Response(matches)
+
+        queryset = Item.objects.filter(ko_name__icontains=keyword)[:5]
+        serializer = ItemAutoCompleteSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)

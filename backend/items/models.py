@@ -42,10 +42,10 @@ class Gadian(models.Model):#콘텐츠로 변경 # 카테고리 추가
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True, blank=True)  # 카테고리 외래키
     ko_name = models.CharField(max_length=50)
     en_name = models.CharField(max_length=50, blank=True)
-    level = models.IntegerField()
+    level = models.IntegerField(null=True, blank=True)  # 입장레벨
     kind = models.CharField(max_length=20, blank=True, null=True)
     stage = models.CharField(max_length=20, blank=True, null=True)
-    vulnerable_properties = models.CharField(max_length=100, blank=True, null=True)
+    vulnerable_properties = models.CharField(max_length=100, blank=True, null=  True)
     image = models.ImageField(upload_to='gadians/', blank=True, null=True)
     activation = models.BooleanField(default=True)#사용하지 않는 가디언은 비 활성화
     

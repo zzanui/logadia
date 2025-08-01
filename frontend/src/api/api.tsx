@@ -19,12 +19,12 @@ export const fetchCategories = async () => {
         
 
 // 활성화 되어있는 가디언리스트를 API로부터 id의 역순으로 받아오는 로직 정렬:(?ordering=-id) //1002
-export const fetchGadiansPage = async (page: number): Promise<{
+export const fetchGadiansPage = async (categoryId: number ,page: number): Promise<{
   results: any[],
   next: string | null
 }> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/gadians/?page=${page}&ordering=-id&search=true`);
+    const response = await fetch(`${API_BASE_URL}/api/gadians/?category_id=${categoryId}&page=${page}&ordering=-id`);
     if (!response.ok) {
       throw new Error('Network response was not ok : 1002');
     }
@@ -74,15 +74,15 @@ export const searchItemAverage = async (itemName: string) => {
 // 아이템 검색 시 자동완성 기능을 위한 API 호출 로직 //1005
 export const fetchItemSuggestions = async (keyword: string) => {
   try {
-          const response = await fetch(`${API_BASE_URL}/api/autocomplete/?item_keyword=${encodeURIComponent(keyword)}`);
-          if (!response.ok) {
-              throw new Error('검색실패:1005');
-          }
-          const itemResult = await response.json();
-          return itemResult;
-      } catch (error) {
-          console.error(`Error searching items 1005 : ${keyword}:`, error);
-          return [];
-      }
+    const response = await fetch(`${API_BASE_URL}/api/autocomplete/?item_keyword=${encodeURIComponent(keyword)}`);
+    if (!response.ok) {
+      throw new Error('검색실패:1005');
+    }
+    const itemResult = await response.json();
+    return itemResult; // [{ ko_name, image }]
+  } catch (error) {
+    console.error(`Error searching items 1005 : ${keyword}:`, error);
+    return [];
+  }
 }
 

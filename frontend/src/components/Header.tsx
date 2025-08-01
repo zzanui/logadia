@@ -15,7 +15,7 @@ const Header: React.FC = () => {
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow">
       <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-          <Link to="/" className="flex items-center">
+          <Link to="/search" className="flex items-center">
             <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">로가디아</span>
           </Link>
 

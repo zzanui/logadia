@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from 'react'
-import GadianCard from '@/components/GadianCard'
+import FieldBossCard from '@/components/FieldBossCard'
 import { fetchGadiansPage, fetchGadianRewards } from '@/api/api'
 
-const Gadian = () => {
-  const [gadians, setGadians] = useState<any[]>([])
+
+const FieldBoss = () => {
+     const [gadians, setGadians] = useState<any[]>([])
   const [page, setPage] = useState(1)
   const [hasNext, setHasNext] = useState(true)
   const [loading, setLoading] = useState(false)
@@ -16,7 +17,7 @@ const Gadian = () => {
     const nextPage = targetPage ?? page
 
     try {
-      const data = await fetchGadiansPage(1, nextPage)//1은 가디언
+      const data = await fetchGadiansPage(4, nextPage)//4는 필드보스
       const gadianList = data.results || data
 
       // 각 가디언에 대해 보상 정보 fetch
@@ -47,7 +48,7 @@ const Gadian = () => {
   return (
     <div className="flex flex-col items-center gap-6">
       {gadians.map((gadian) => (
-        <GadianCard key={gadian.id} {...gadian} />
+        <FieldBossCard key={gadian.id} {...gadian} />
       ))}
 
       {hasNext && (
@@ -62,5 +63,4 @@ const Gadian = () => {
     </div>
   )
 }
-
-export default Gadian
+    export default FieldBoss
