@@ -81,11 +81,11 @@ class GadianItemPriceInfoView(APIView):
 # 아이템 검색 시 해당 아이템의 획득처를 반환하는 API
 class SearchItemAverageView(APIView):#여기 수정
     def get(self, request):
-        query = request.GET.get("item_name", "")
+        query = request.GET.get("search_keyword", "")
         if not query:
-            return Response({"error": "item_name 쿼리가 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "item_keyword 쿼리가 필요합니다."}, status=400)
         # 아이템 이름으로 필터링
-        results = GadianItemAverage.objects.filter(item__ko_name=query)
+        results = GadianItemAverage.objects.filter(item__search_keyword=query)
 
         #최신 날짜 기준으로 필터링
         latest_date_subquery = (
@@ -109,6 +109,6 @@ class ItemAutoCompleteView(APIView):
         if not keyword:
             return Response([])
 
-        queryset = Item.objects.filter(ko_name__icontains=keyword)[:5]
+        queryset = Item.objects.filter(ko_name__icontains=keyword)[:5]# 제한된 개수로 검색
         serializer = ItemAutoCompleteSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)

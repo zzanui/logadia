@@ -13,6 +13,7 @@ class Item(models.Model):
     en_name =  models.CharField(max_length=50, blank=True, null=True)
     tear = models.CharField(max_length=20, blank=True, null=True)  
     image = models.ImageField(upload_to='items/', blank=True, null=True)
+    search_keyword = models.CharField(max_length=100, blank=True, null=True)  # 검색 키워드
 
     def __str__(self):
         return f"{self.ko_name}"

@@ -59,7 +59,7 @@ export const fetchGadianRewards = async (gadianId: number)=>{
 // 검색한 아이템을 API로부터 받아오는 로직 //1004 #여차의 경우 페이지 추가
 export const searchItemAverage = async (itemName: string) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/search/?item_name=${encodeURIComponent(itemName)}`);
+        const response = await fetch(`${API_BASE_URL}/api/search/?search_keyword=${encodeURIComponent(itemName)}`);
         if (!response.ok) {
             throw new Error('검색실패:1004');
         }

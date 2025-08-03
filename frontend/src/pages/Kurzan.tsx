@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import KurzanCard from '@/components/KurzanCard '
+import KurzanCard from '@/components/KurzanCard'
 import { fetchGadiansPage, fetchGadianRewards } from '@/api/api'
 
 

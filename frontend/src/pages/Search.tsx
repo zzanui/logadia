@@ -5,11 +5,11 @@ const ItemSearchPage = () => {
   const [keyword, setKeyword] = useState('')
   const [results, setResults] = useState<any[]>([])
   const [suggestions, setSuggestions] = useState<{ ko_name: string; image: string | null }[]>([])
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1) // 🔼 선택된 인덱스
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1)
   const autocompleteRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // 외부 클릭 감지 → 드롭다운 닫기
+  // 외부 클릭 시 자동완성 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (autocompleteRef.current && !autocompleteRef.current.contains(event.target as Node)) {
@@ -21,7 +21,7 @@ const ItemSearchPage = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // 자동완성 fetch
+  // 자동완성 검색어 fetch
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (keyword.trim()) {
@@ -37,7 +37,6 @@ const ItemSearchPage = () => {
     return () => clearTimeout(delayDebounce)
   }, [keyword])
 
-  // input 다시 클릭 시 드롭다운 복원
   const handleFocus = async () => {
     if (keyword.trim() && suggestions.length === 0) {
       const data = await fetchItemSuggestions(keyword)
@@ -46,7 +45,6 @@ const ItemSearchPage = () => {
     }
   }
 
-  // 키보드 ↑↓ 엔터 처리
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault()
@@ -66,7 +64,6 @@ const ItemSearchPage = () => {
     }
   }
 
-  // 검색 실행
   const handleSearch = async (input?: string) => {
     try {
       const data = await searchItemAverage(input ?? keyword)
@@ -78,7 +75,7 @@ const ItemSearchPage = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-gray-50 min-h-screen">
-      {/* 검색 입력창 + 버튼 + 자동완성 */}
+      {/* 검색창 */}
       <div className="relative w-full mb-6" ref={autocompleteRef}>
         <div className="flex">
           <input
@@ -127,41 +124,53 @@ const ItemSearchPage = () => {
         )}
       </div>
 
-      {/* 검색 결과 테이블 */}
-      {results.length > 0 && (
-        <table className="table-auto w-full border mt-6">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 text-black px-4 py-2">카테고리</th>
-              <th className="border border-gray-300 text-black px-4 py-2">콘텐츠 이름</th>
-              <th className="border border-gray-300 text-black px-4 py-2">아이템 이름</th>
-              <th className="border border-gray-300 text-black px-4 py-2">개수</th>
-              <th className="border border-gray-300 text-black px-4 py-2">귀속 여부</th>
-            </tr>
-          </thead>
-          <tbody>
-            {results.map((row, idx) => (
-              <tr key={idx}>
-                <td className="border border-gray-300 text-black px-4 py-2">
-                  {row.gadian?.category?.ko_name}
-                </td>
-                <td className="border border-gray-300 text-black px-4 py-2">
-                  {row.gadian?.ko_name}
-                </td>
-                <td className="border border-gray-300 text-black px-4 py-2">
-                  {row.item?.ko_name}
-                </td>
-                <td className="border border-gray-300 text-black px-4 py-2">
-                  {row.average_count}
-                </td>
-                <td className="border border-gray-300 text-black px-4 py-2">
-                  {row.binding ? 'O' : 'X'}
-                </td>
-              </tr>
+      {/* 카테고리별 결과 테이블 */}
+      {results.length > 0 && (() => {
+        const groupedResults = results.reduce((acc, row) => {
+          const categoryName = row.gadian?.category?.ko_name || '기타'
+          if (!acc[categoryName]) acc[categoryName] = []
+          acc[categoryName].push(row)
+          return acc
+        }, {} as Record<string, any[]>)
+
+        return (
+          <>
+            {Object.entries(groupedResults).map(([categoryName, rows]) => (
+              <div key={categoryName} className="mb-10">
+                <h2 className="text-xl font-bold text-black mb-3">{categoryName}</h2>
+                <table className="table-fixed w-full border">
+                  <thead>
+                    <tr className="bg-blue-50 text-gray-800">
+                      <th className="w-1/4 border border-gray-400  text-left px-4 py-2">콘텐츠 이름</th>
+                      <th className="w-1/4 border border-gray-400  text-left px-4 py-2">아이템 이름</th>
+                      <th className="w-1/6 border border-gray-400  text-center px-4 py-2">개수</th>
+                      <th className="w-1/6 border border-gray-400  text-center px-4 py-2">귀속 여부</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((row, idx) => (
+                      <tr key={idx}>
+                        <td className="w-1/4 border border-gray-400 text-gray-700 text-left px-4 py-2 whitespace-nowrap">
+                          {row.gadian?.ko_name}
+                        </td>
+                        <td className="w-1/4 border border-gray-400 text-gray-700 text-left px-4 py-2 break-words">
+                          {row.item?.ko_name}
+                        </td>
+                        <td className="w-1/6 border border-gray-400 text-gray-700 text-center px-4 py-2">
+                          {row.average_count}
+                        </td>
+                        <td className="w-1/6 border border-gray-400 text-gray-700 text-center px-4 py-2">
+                          {row.binding ? 'O' : 'X'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ))}
-          </tbody>
-        </table>
-      )}
+          </>
+        )
+      })()}
     </div>
   )
 }
