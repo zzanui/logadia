@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import OuterRef, Subquery, Max
 
-from .models import Item, Category, Gadian, GadianItemAverage, ActionItem
-from .serializers import ItemSerializer, CategorySerializer, GadianSerializer, GadianItemAverageSerializer, ItemAutoCompleteSerializer
+from .models import Item, Category, Content, ContentItemAverage, ActionItem
+from .serializers import ItemSerializer, CategorySerializer, ContentSerializer, ContentItemAverageSerializer, ItemAutoCompleteSerializer
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -24,9 +24,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
     filterset_fields = ['category']
     ordering_fields = ['category']
 
-class GadianViewSet(viewsets.ModelViewSet):
-    queryset = Gadian.objects.filter(activation=True)# 활성화된 콘텐츠만 조회 
-    serializer_class = GadianSerializer
+class ContentViewSet(viewsets.ModelViewSet):
+    queryset = Content.objects.filter(activation=True)# 활성화된 콘텐츠만 조회 
+    serializer_class = ContentSerializer
 
     # 필터링, 정렬, 검색 기능을 추가
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
@@ -36,24 +36,24 @@ class GadianViewSet(viewsets.ModelViewSet):
 
 
 #예상 보상골드 가격 책정api
-class GadianItemPriceInfoView(APIView):
+class ContentItemPriceInfoView(APIView):
     def get(self, request):
-        gadian_ids = request.query_params.getlist('gadian_id')
-        if not gadian_ids:
-            return Response({"error": "gadian_id is required"}, status=400)
+        content_ids = request.query_params.getlist('content_id')
+        if not content_ids:
+            return Response({"error": "content_id is required"}, status=400)
 
         results = []
 
-        for gadian_id in gadian_ids:
+        for content_id in content_ids:
         # Step 1: 같은 item에 대해 가장 최신 date만 필터링
-            latest_date_subquery = GadianItemAverage.objects.filter(
-                gadian_id=gadian_id,
+            latest_date_subquery = ContentItemAverage.objects.filter(
+                content_id=content_id,
                 #OuterRef는 Django ORM에서 서브쿼리(Subquery)를 사용할 때 외부 쿼리의 값을 참조하기 위해 사용하는 특수 객체
                 item=OuterRef('item')
             ).order_by('-date')
 
-            latest_averages = GadianItemAverage.objects.filter(
-                gadian_id=gadian_id,
+            latest_averages = ContentItemAverage.objects.filter(
+                content_id=content_id,
                 date=Subquery(latest_date_subquery.values('date')[:1])
             ).select_related('item')
         
@@ -68,7 +68,7 @@ class GadianItemPriceInfoView(APIView):
                 total_price = (avg.average_count / action.bundleCount) * action.current_min_price
 
                 results.append({
-                    "gadian_id": int(gadian_id),
+                    "content_id": int(content_id),
                     "item_name": avg.item.ko_name,
                     "item_image": request.build_absolute_uri(avg.item.image.url) if avg.item.image else None,
                     "item_count": avg.average_count,
@@ -85,11 +85,11 @@ class SearchItemAverageView(APIView):#여기 수정
         if not query:
             return Response({"error": "item_keyword 쿼리가 필요합니다."}, status=400)
         # 아이템 이름으로 필터링
-        results = GadianItemAverage.objects.filter(item__search_keyword=query)
+        results = ContentItemAverage.objects.filter(item__search_keyword=query)
 
         #최신 날짜 기준으로 필터링
         latest_date_subquery = (
-            GadianItemAverage.objects
+            ContentItemAverage.objects
             .filter(item=OuterRef('item'))
             .values('item')
             .annotate(latest_date=Max('date'))
@@ -98,7 +98,7 @@ class SearchItemAverageView(APIView):#여기 수정
 
         latest_records = results.filter(date=Subquery(latest_date_subquery))
         
-        serializer = GadianItemAverageSerializer(latest_records, many=True)
+        serializer = ContentItemAverageSerializer(latest_records, many=True)
         return Response(serializer.data)
     
 

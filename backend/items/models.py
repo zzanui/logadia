@@ -1,8 +1,6 @@
 from django.db import models
-
- 
 """
-# \/아이템 모델\/
+# /아이템 모델/
 
 # 한글명,
 # 영문명,
@@ -11,7 +9,7 @@ from django.db import models
 class Item(models.Model):
     ko_name = models.CharField(max_length=50)
     en_name =  models.CharField(max_length=50, blank=True, null=True)
-    tear = models.CharField(max_length=20, blank=True, null=True)  
+    tier = models.CharField(max_length=20, blank=True, null=True)  
     image = models.ImageField(upload_to='items/', blank=True, null=True)
     search_keyword = models.CharField(max_length=100, blank=True, null=True)  # 검색 키워드
 
@@ -28,7 +26,7 @@ class Category(models.Model):
         return self.en_name
     
 """
-# \/가디언 모델\/
+# /가디언 모델/
 
 # 한글명, 
 # 영문명, 
@@ -39,7 +37,7 @@ class Category(models.Model):
 # 이미지, 
 # 활성화여부
 """
-class Gadian(models.Model):#콘텐츠로 변경 # 카테고리 추가
+class Content(models.Model):#콘텐츠로 변경 # 카테고리 추가
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True, blank=True)  # 카테고리 외래키
     ko_name = models.CharField(max_length=50)
     en_name = models.CharField(max_length=50, blank=True)
@@ -47,7 +45,7 @@ class Gadian(models.Model):#콘텐츠로 변경 # 카테고리 추가
     kind = models.CharField(max_length=20, blank=True, null=True)
     stage = models.CharField(max_length=20, blank=True, null=True)
     vulnerable_properties = models.CharField(max_length=100, blank=True, null=  True)
-    image = models.ImageField(upload_to='gadians/', blank=True, null=True)
+    image = models.ImageField(upload_to='contents/', blank=True, null=True)
     activation = models.BooleanField(default=True)#사용하지 않는 가디언은 비 활성화
     
     def __str__(self):
@@ -56,7 +54,7 @@ class Gadian(models.Model):#콘텐츠로 변경 # 카테고리 추가
 
 
 """
-# \/가디언 보상 모델\/
+#/가디언 보상 모델/
 
 # 가디언(외래키),
 # 아이템(외래키),
@@ -65,24 +63,26 @@ class Gadian(models.Model):#콘텐츠로 변경 # 카테고리 추가
 # 생성일시,
 """
 #데이터가 없으므로 임시로 4티어 가디언만 임시로 데이터 축적하자, 매일매일 데이터 축적 테이블에서 평균을 구한 후 평균값을 도출 한 후 보상테이블에 추가하는 방식으로 진행 
-class GadianItemAverage(models.Model):
-    gadian = models.ForeignKey(Gadian , on_delete=models.PROTECT)#콘텐츠로 변경
+class ContentItemAverage(models.Model):
+    content = models.ForeignKey(Content , on_delete=models.PROTECT)#콘텐츠로 변경
     item = models.ForeignKey(Item, on_delete=models.PROTECT)  
-    average_count = models.IntegerField()  # 아이템 개수
+    item_name = models.CharField(max_length=50, blank=True, null=True)  # 아이템 이름
+    average_count = models.FloatField()  # 아이템 개수
     binding = models.BooleanField(default=False)  # 아이템 귀속여부
     date = models.DateField()  # 저장 날짜
+    created_at = models.DateTimeField(null=True)#생성일시
 
     class Meta:
         # 유니크 제약조건 설정
         # 같은 가디언, 아이템, 귀속여부, 날짜 조합은
         # 중복 저장되지 않도록 설정
-        unique_together = ('gadian', 'item', 'binding', 'date')
+        unique_together = ('content', 'item', 'binding', 'date')
         indexes = [
             models.Index(fields=['date']),
         ]
 
     def __str__(self):
-        return f"{self.gadian.ko_name} | {self.item.ko_name} | {self.created_at.strftime('%Y-%m-%d')}"
+        return f"{self.content.ko_name} | {self.item.ko_name} | {self.created_at.strftime('%Y-%m-%d')}"
     
 
 
@@ -96,16 +96,17 @@ class GadianItemAverage(models.Model):
 # 출처,
 # 생성일시, 
 """
-class GadianItemHistory(models.Model):
-    Gadian = models.ForeignKey(Gadian, on_delete=models.PROTECT)#가디언
+class ContentItemHistory(models.Model):
+    content = models.ForeignKey(Content, on_delete=models.PROTECT)#가디언
     item = models.ForeignKey(Item, on_delete=models.PROTECT)#아이템
+    item_name = models.CharField(max_length=50, blank=True, null=True)  # 아이템 이름
     count = models.IntegerField(default=0)#아이템 개수
     binding = models.BooleanField(default=False)#아이템 귀속여부
     rest_gage = models.BooleanField(default=False)#휴식 게이지
     source = models.CharField(max_length=50, blank=True, null=True)#출처
     created_at = models.DateTimeField(null=True)#생성일시
     def __str__(self):
-        return f"{self.Gadian.ko_name} | {self.item.ko_name} | {self.created_at.strftime('%Y-%m-%d')}"
+        return f"{self.content.ko_name} | {self.item.ko_name} | {self.created_at.strftime('%Y-%m-%d')}"
 
 
 #15분마다 추가됨
