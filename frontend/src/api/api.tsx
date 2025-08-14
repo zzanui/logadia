@@ -24,7 +24,7 @@ export const fetchGadiansPage = async (categoryId: number ,page: number): Promis
   next: string | null
 }> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/gadians/?category_id=${categoryId}&page=${page}&ordering=-id`);
+    const response = await fetch(`${API_BASE_URL}/api/contents/?category_id=${categoryId}&page=${page}&ordering=-id`);
     if (!response.ok) {
       throw new Error('Network response was not ok : 1002');
     }
@@ -43,7 +43,7 @@ export const fetchGadiansPage = async (categoryId: number ,page: number): Promis
 // 가디언id를 통해 가디언보상, 골드가치를 받아오는 로직 //1003
 export const fetchGadianRewards = async (gadianId: number)=>{
     try {
-        const response = await fetch(`${API_BASE_URL}/api/prices/?gadian_id=${gadianId}`);
+        const response = await fetch(`${API_BASE_URL}/api/prices/?content_id=${gadianId}`);
         if (!response.ok) {
             throw new Error('Network response was not ok : 1003');
         }

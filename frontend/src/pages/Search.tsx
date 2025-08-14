@@ -127,7 +127,7 @@ const ItemSearchPage = () => {
       {/* 카테고리별 결과 테이블 */}
       {results.length > 0 && (() => {
         const groupedResults = results.reduce((acc, row) => {
-          const categoryName = row.gadian?.category?.ko_name || '기타'
+          const categoryName = row.content?.category?.ko_name || '기타'
           if (!acc[categoryName]) acc[categoryName] = []
           acc[categoryName].push(row)
           return acc
@@ -151,7 +151,7 @@ const ItemSearchPage = () => {
                     {rows.map((row, idx) => (
                       <tr key={idx}>
                         <td className="w-1/4 border border-gray-400 text-gray-700 text-left px-4 py-2 whitespace-nowrap">
-                          {row.gadian?.ko_name}
+                          {row.content?.ko_name}
                         </td>
                         <td className="w-1/4 border border-gray-400 text-gray-700 text-left px-4 py-2 break-words">
                           {row.item?.ko_name}

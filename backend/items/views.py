@@ -85,7 +85,7 @@ class SearchItemAverageView(APIView):#여기 수정
         if not query:
             return Response({"error": "item_keyword 쿼리가 필요합니다."}, status=400)
         # 아이템 이름으로 필터링
-        results = ContentItemAverage.objects.filter(item__search_keyword=query)
+        results = ContentItemAverage.objects.filter(item__ko_name=query)
 
         #최신 날짜 기준으로 필터링
         latest_date_subquery = (
