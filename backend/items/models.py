@@ -112,7 +112,7 @@ class ActionItem(models.Model):
     item = models.ForeignKey(Item, on_delete=models.PROTECT)#아이템
     grade = models.CharField(max_length=50)#등급
     bundleCount = models.IntegerField(default=1)
-    trade_remain_count = models.CharField(max_length=50, null=True)#등급
+    trade_remain_count = models.CharField(max_length=50, null=True)
     y_day_avg_price = models.FloatField() #어제 평균가
     recent_price = models.FloatField()#최근 거래가 
     current_min_price = models.FloatField()#현재 최저가 !!중요!!

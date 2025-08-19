@@ -61,18 +61,20 @@ class ContentItemPriceInfoView(APIView):
             for avg in latest_averages:
                 # 2. 각 아이템의 최신 거래 정보 (ActionItem)
                 action = ActionItem.objects.filter(item=avg.item).order_by('-created_at').first()
-                if not action or action.bundleCount == 0:
-                    continue  # 거래 정보 없음 or 0으로 나누는 문제 방지
-
-                # 3. 계산: 평균 개수 / 묶음 수 * 현재 최저가
-                total_price = (avg.average_count / action.bundleCount) * action.current_min_price
+                if not action or not action.bundleCount or not action.current_min_price:
+                    action_price = 0
+                    total_price = 0
+                else: 
+                    # 3. 계산: 평균 개수 / 묶음 수 * 현재 최저가
+                    action_price = action.current_min_price
+                    total_price = (avg.average_count / action.bundleCount) * action.current_min_price
 
                 results.append({
                     "content_id": int(content_id),
                     "item_name": avg.item.ko_name,
                     "item_image": request.build_absolute_uri(avg.item.image.url) if avg.item.image else None,
                     "item_count": avg.average_count,
-                    "action_price": action.current_min_price,
+                    "action_price": action_price,
                     "calculated_price": round(total_price, 2),
                 })
 
