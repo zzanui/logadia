@@ -76,8 +76,9 @@ const GadianCard: React.FC<CardProps> = ({
                 type="checkbox"
                 checked={useRestGauge}
                 onChange={(e) => setUseRestGauge(e.target.checked)}
+                className="w-5 h-5 accent-blue-600 cursor-pointer rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
               />
-              휴식 게이지 사용
+              휴식 게이지 사용여부
             </label>
           </div>
       </div>

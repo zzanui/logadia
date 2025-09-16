@@ -56,7 +56,7 @@ const Header: React.FC = () => {
 
           {/* 네비게이션 메뉴 */}
           <div className={`${menuOpen ? 'block' : 'hidden'} lg:flex justify-between items-center w-full lg:w-auto lg:order-1`} id="mobile-menu-2">
-            <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+            <ul className="flex flex-col mt-4 font-medium text-gray-900 lg:flex-row lg:space-x-8 lg:mt-0">
               {categories.map((category) => {
                 const path = '/' + category.en_name.toLowerCase().replace(/\s+/g, '-')
                 const isActive = location.pathname === path
@@ -67,7 +67,7 @@ const Header: React.FC = () => {
                       to={path}
                       className={`block py-2 pr-4 pl-3 ${
                         isActive ? 'text-blue-700' : 'text-gray-700'
-                      } border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700`}
+                      } border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:p-0 text-gray-100 hover:text-white hover:bg-gray-700 hover:text-white hover:bg-transparent border-gray-700 font-semibold`}
                       onClick={() => setMenuOpen(false)} // 메뉴 클릭 시 자동 닫힘
                     >
                       {category.ko_name}
