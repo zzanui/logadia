@@ -15,7 +15,7 @@ export const useAppRoutes = (): RouteObject[] => {
   const { categories } = useCategoryContext()
 
   const staticRoutes: RouteObject[] = [
-    { path: '/', element: <Home /> },
+    { path: '/', element: <Search /> },
     { path: '/search', element: <Search /> },
     // { path: '/gadian', element: <Gadian /> },
     // { path: '/Kurzan-war', element: <Gadian /> },

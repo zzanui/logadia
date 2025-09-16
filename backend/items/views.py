@@ -15,7 +15,7 @@ class ItemViewSet(viewsets.ModelViewSet):
     # 필터링, 정렬, 검색 기능을 추가
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     filterset_fields = [ 'ko_name', 'en_name', 'tear']
-    ordering_fields = [ 'id', 'tear']
+    ordering_fields = [ 'id', 'tear', 'ko_name']
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()

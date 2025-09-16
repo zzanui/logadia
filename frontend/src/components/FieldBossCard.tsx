@@ -54,27 +54,26 @@ const FieldBossCard: React.FC<CardProps> = ({
   return (
     <div className="max-w-6xl w-full flex bg-white shadow-md rounded-lg overflow-hidden border border-gray-300">
       {/*좌측 이미지 */}
-      <div className="w-80 flex-none bg-black flex justify-center items-center overflow-hidden">
+      {/* <div className="w-80 flex-none bg-black flex justify-center items-center overflow-hidden">
         <img
           src={image}
           alt={ko_name}
           className="w-full h-full object-contain"
         />
-      </div>
+      </div> */}
 
       {/* 중앙 정보 */}
-      <div className="p-4 flex-grow flex flex-col justify-between leading-normal">
-        <div>
-          <div className="text-gray-900 font-bold text-xl mb-1">{ko_name}</div>
-          <p className="text-gray-700 text-sm mb-1">{kind}: {stage}</p>
-          <p className="text-gray-700 text-sm mb-1">레벨: {level}</p>
-          </div>
-      </div>
+        <div className="p-4 basis-1/3 shrink-0 min-w-0">
+          <div className="space-y-1">
+            <div className="text-gray-900 font-bold text-xl mb-1">{ko_name}</div>
+            <p className="text-gray-700 text-sm mb-1">레벨: {level}</p>
+          </div>          
+        </div>
 
       {/* 오른쪽: 보상 카드 목록 */}
-      <div className="p-4 flex-[3] border-l border-gray-200">
+      <div className="p-4 basis-2/3 grow-0 shrink-0 border-l border-gray-200">
         <p className="text-sm font-semibold text-gray-800 mb-1">보상 아이템</p>
-        <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {items.map((item, index) => {
             const adjustedCount = useRestGauge ? item.item_count * 2 : item.item_count
             const adjustedPrice = useRestGauge ? item.calculated_price * 2 : item.calculated_price

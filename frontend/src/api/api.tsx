@@ -18,13 +18,13 @@ export const fetchCategories = async () => {
 }
         
 
-// 활성화 되어있는 가디언리스트를 API로부터 id의 역순으로 받아오는 로직 정렬:(?ordering=-id) //1002
+// 활성화 되어있는 가디언리스트를 API로부터 id의 역순으로 받아오는 로직 정렬:(?ordering=-id) //1002 레벨 역순으로 정렬
 export const fetchGadiansPage = async (categoryId: number ,page: number): Promise<{
   results: any[],
   next: string | null
 }> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/contents/?category_id=${categoryId}&page=${page}&ordering=-id`);
+    const response = await fetch(`${API_BASE_URL}/api/contents/?category_id=${categoryId}&page=${page}&ordering=-level`);
     if (!response.ok) {
       throw new Error('Network response was not ok : 1002');
     }
