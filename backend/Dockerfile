@@ -1,21 +1,26 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.12
+FROM python:3.12-slim
 
-# Set the working directory in the container
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DEFAULT_TIMEOUT=120
+
 WORKDIR /app
 
-# Copy the requirements file into the container
-COPY requirements.txt /app/
+# 최신 툴체인
+RUN python -m pip install --upgrade pip setuptools wheel
 
-# Install the dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# 바이너리 휠 우선(apt 없이 설치)
+RUN pip install --only-binary=:all: --prefer-binary \
+    "psycopg[binary]>=3.1" \
+    "numpy>=2" \
+    "pandas>=2" \
+    "pillow>=10"
 
-# Copy the rest of the application code into the container
-COPY . /app/
+# 나머지 의존성
+COPY requirements.txt .
+RUN pip install --prefer-binary -r requirements.txt
 
-# Run the application
-
-CMD sh -c "python manage.py runserver 0.0.0.0:8000"
-
-#처음 프로젝트 설치시에만 사용
-# CMD sh -c "django-admin startproject config . && python manage.py runserver 0.0.0.0:8000"
+# 앱 복사
+COPY . .
+# 실행은 compose의 command에서 (migrate + collectstatic + gunicorn)

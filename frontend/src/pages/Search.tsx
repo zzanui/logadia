@@ -1,10 +1,42 @@
 import { useState, useEffect, useRef } from 'react'
 import { searchItemAverage, fetchItemSuggestions } from '@/api/api'
 
+/** ===== 타입 정의 ===== */
+type Suggestion = { ko_name: string; image: string | null }
+
+type ResultRow = {
+  content?: { ko_name?: string; category?: { ko_name?: string } }
+  item?: { ko_name?: string }
+  average_count?: number
+  binding?: boolean
+}
+
+/** unknown → Suggestion[] 변환기 (안전 파싱) */
+function toSuggestions(value: unknown): Suggestion[] {
+  if (!Array.isArray(value)) return []
+  return value.map((v) => {
+    const obj = (v ?? {}) as Record<string, unknown>
+    const ko_name =
+      typeof obj.ko_name === 'string'
+        ? obj.ko_name
+        : typeof (obj as any).name === 'string'
+        ? ((obj as any).name as string)
+        : ''
+    const image = typeof obj.image === 'string' ? obj.image : null
+    return { ko_name, image }
+  })
+}
+
+/** unknown → ResultRow[] 변환기 (안전 파싱) */
+function toResultRows(value: unknown): ResultRow[] {
+  if (!Array.isArray(value)) return []
+  return value.map((v) => (v ?? {}) as ResultRow)
+}
+
 const ItemSearchPage = () => {
   const [keyword, setKeyword] = useState('')
-  const [results, setResults] = useState<any[]>([])
-  const [suggestions, setSuggestions] = useState<{ ko_name: string; image: string | null }[]>([])
+  const [results, setResults] = useState<ResultRow[]>([])
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(-1)
   const autocompleteRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -21,15 +53,20 @@ const ItemSearchPage = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // 자동완성 검색어 fetch
+  // 자동완성 검색어 fetch (디바운스)
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
+    const delayDebounce = setTimeout(async () => {
       if (keyword.trim()) {
-        fetchItemSuggestions(keyword).then((data) => {
-          const unique = Array.from(new Map(data.map((item: any) => [item.ko_name, item])).values())
-          setSuggestions(unique)
+        try {
+          const data = (await fetchItemSuggestions(keyword)) as unknown
+          const uniq = Array.from(
+            new Map(toSuggestions(data).map((it) => [it.ko_name, it])).values()
+          )
+          setSuggestions(uniq)
           setSelectedIndex(-1)
-        })
+        } catch (e) {
+          console.error('자동완성 실패:', e)
+        }
       } else {
         setSuggestions([])
       }
@@ -39,13 +76,20 @@ const ItemSearchPage = () => {
 
   const handleFocus = async () => {
     if (keyword.trim() && suggestions.length === 0) {
-      const data = await fetchItemSuggestions(keyword)
-      const unique = Array.from(new Map(data.map((item: any) => [item.ko_name, item])).values())
-      setSuggestions(unique)
+      try {
+        const data = (await fetchItemSuggestions(keyword)) as unknown
+        const uniq = Array.from(
+          new Map(toSuggestions(data).map((it) => [it.ko_name, it])).values()
+        )
+        setSuggestions(uniq)
+      } catch (e) {
+        console.error('자동완성 초기 로드 실패:', e)
+      }
     }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!suggestions.length) return
     if (e.key === 'ArrowDown') {
       e.preventDefault()
       setSelectedIndex((prev) => (prev + 1) % suggestions.length)
@@ -66,8 +110,8 @@ const ItemSearchPage = () => {
 
   const handleSearch = async (input?: string) => {
     try {
-      const data = await searchItemAverage(input ?? keyword)
-      setResults(data)
+      const data = (await searchItemAverage(input ?? keyword)) as unknown
+      setResults(toResultRows(data))
     } catch (err) {
       console.error('검색 실패:', err)
     }
@@ -100,7 +144,7 @@ const ItemSearchPage = () => {
           <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded mt-1 max-h-40 overflow-auto text-black">
             {suggestions.map((item, idx) => (
               <li
-                key={idx}
+                key={`${item.ko_name}-${idx}`}
                 className={`flex items-center px-3 py-2 cursor-pointer ${
                   idx === selectedIndex ? 'bg-blue-100' : 'hover:bg-gray-100'
                 }`}
@@ -131,7 +175,7 @@ const ItemSearchPage = () => {
           if (!acc[categoryName]) acc[categoryName] = []
           acc[categoryName].push(row)
           return acc
-        }, {} as Record<string, any[]>)
+        }, {} as Record<string, ResultRow[]>)
 
         return (
           <>
@@ -148,7 +192,7 @@ const ItemSearchPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {rows.map((row, idx) => (
+                    {rows.map((row: ResultRow, idx: number) => (
                       <tr key={idx}>
                         <td className="w-1/4 border border-gray-400 text-gray-700 text-left px-4 py-2 whitespace-nowrap">
                           {row.content?.ko_name}
