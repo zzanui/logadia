@@ -56,7 +56,7 @@ class Content(models.Model):#콘텐츠로 변경 # 카테고리 추가
 
 # 가디언(외래키),
 # 아이템(외래키),
-# 아이템 개수,
+# 아이템 예상 획득 갯수,
 # 아이템 귀속여부
 # 생성일시,
 """
@@ -65,7 +65,7 @@ class ContentItemAverage(models.Model):
     content = models.ForeignKey(Content , on_delete=models.PROTECT)#콘텐츠로 변경
     item = models.ForeignKey(Item, on_delete=models.PROTECT)  
     item_name = models.CharField(max_length=50, blank=True, null=True)  # 아이템 이름
-    average_count = models.FloatField()  # 아이템 개수
+    average_count = models.FloatField()  # 아이템 예상 획득 갯수
     binding = models.BooleanField(default=False)  # 아이템 귀속여부
     date = models.DateField()  # 생성 일
 
@@ -88,7 +88,7 @@ class ContentItemAverage(models.Model):
 # 가디언(외래키),
 # 아이템(외래키),
 # 아이템 표기 이름,
-# 아이템 개수,
+# 아이템 예상 획득 갯수,
 # 아이템 귀속여부
 # 휴식 게이지,
 # 출처,
@@ -98,7 +98,7 @@ class ContentItemHistory(models.Model):
     content = models.ForeignKey(Content, on_delete=models.PROTECT)#가디언외래키
     item = models.ForeignKey(Item, on_delete=models.PROTECT)#아이템외래키
     item_name = models.CharField(max_length=50, blank=True, null=True)  # 아이템 표기 이름
-    count = models.IntegerField(default=0)#아이템 개수
+    count = models.IntegerField(default=0)#아이템 예상 획득 갯수
     binding = models.BooleanField(default=False)#아이템 귀속여부
     rest_gage = models.BooleanField(default=False)#휴식 게이지
     source = models.CharField(max_length=50, blank=True, null=True)#출처

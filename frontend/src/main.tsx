@@ -14,7 +14,7 @@ createRoot(document.getElementById('root')!).render(
     <App />
     </BrowserRouter>
     </CategoryProvider>
-  </StrictMode>,
+  </StrictMode>
 )
 
 //할 것 : serach창 메인에 돋보기 아이콘을 추가하여 허전함을 줄이기, 

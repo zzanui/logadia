@@ -12,11 +12,11 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow">
-      <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-blue-900">
+    <header className="sticky top-0 z-50 bg-blue-200 shadow">
+      <nav className="bg-blue-900 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-blue-900">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
           <Link to="/search" className="flex items-center">
-            <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">로가디아</span>
+            <span className="self-center text-xl font-semibold whitespace-nowrap text-white">로가디아</span>
           </Link>
 
           {/* 햄버거 버튼 */}
@@ -24,7 +24,7 @@ const Header: React.FC = () => {
             <button
               onClick={toggleMenu}
               type="button"
-              className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+              className="inline-flex items-center p-2 ml-1 text-sm text-white rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-600"
               aria-controls="mobile-menu-2"
               aria-expanded={menuOpen}
             >
@@ -56,7 +56,7 @@ const Header: React.FC = () => {
 
           {/* 네비게이션 메뉴 */}
           <div className={`${menuOpen ? 'block' : 'hidden'} lg:flex justify-between items-center w-full lg:w-auto lg:order-1`} id="mobile-menu-2">
-            <ul className="flex flex-col mt-4 font-medium text-gray-900 lg:flex-row lg:space-x-8 lg:mt-0">
+            <ul className="flex flex-col mt-4 font-medium text-white lg:flex-row lg:space-x-8 lg:mt-0">
               {categories.map((category) => {
                 const path = '/' + category.en_name.toLowerCase().replace(/\s+/g, '-')
                 const isActive = location.pathname === path
@@ -66,8 +66,8 @@ const Header: React.FC = () => {
                     <Link
                       to={path}
                       className={`block py-2 pr-4 pl-3 ${
-                        isActive ? 'text-blue-700' : 'text-gray-700'
-                      } border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:p-0 text-gray-100 hover:text-white hover:bg-gray-700 hover:text-white hover:bg-transparent border-gray-700 font-semibold`}
+                        isActive ? 'text-white' : 'text-white'
+                      } border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:p-0 white hover:text-white hover:bg-gray-700 hover:text-white hover:bg-transparent border-gray-700 font-semibold`}
                       onClick={() => setMenuOpen(false)} // 메뉴 클릭 시 자동 닫힘
                     >
                       {category.ko_name}

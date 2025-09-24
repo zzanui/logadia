@@ -34,3 +34,4 @@ wcwidth==0.2.13
 
 # 배포용 추가
 gunicorn==23.0.0
+python-decouple

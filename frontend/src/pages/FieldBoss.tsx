@@ -55,7 +55,7 @@ const FieldBoss = () => {
         <button
           onClick={() => loadMoreGadians()}
           disabled={loading}
-          className="px-4 py-2 mt-4 bg-blue-600 text-white rounded"
+          className="px-4 py-2 mt-4 bg-blue-600 text-black rounded"
         >
           {loading ? '불러오는 중...' : '더 보기'}
         </button>
