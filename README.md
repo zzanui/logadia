@@ -5,14 +5,14 @@
 > 참여인원: 1인  
 > 역할: 기획 · 설계 · 개발 · 배포 전 과정 담당  
 > **배포 URL:** [https://logadia.co.kr](https://logadia.co.kr)
+<img width="412" height="424" alt="1" src="https://github.com/user-attachments/assets/fca119f0-8b69-492f-941a-943bf2461540" />
+<img width="412" height="424" alt="2" src="https://github.com/user-attachments/assets/2b78c8d4-460a-413d-8bae-7cdc47763682" />
 
 ---
 
 ## 프로젝트 개요
 
-**로가디아(Logadia)** 는 게임 **로스트아크(Lost Ark)** 의 콘텐츠 보상 가치를  
-거래소 시세 기준으로 실시간 환산하여 보여주는 웹 서비스입니다.  
-
+**로가디아(Logadia)** 는 게임 **로스트아크(Lost Ark)** 의 콘텐츠 보상 가치를 거래소 시세 기준으로 실시간 환산하여 보여주는 웹 서비스입니다.  
 사용자는 특정 콘텐츠 수행 시 획득 가능한 아이템의 가치를 인게임 화폐(골드) 기준으로 확인할 수 있습니다.
 
 ---
@@ -49,8 +49,6 @@
 | **Server** | AWS EC2 (Ubuntu 22.04) | HTTPS 배포 및 운영 |
 | **Web Server** | Nginx + Certbot | SSL 인증서 발급 및 리버스 프록시 구성 |
 
-> 캐시는 데이터량이 크지 않아 별도 구성하지 않았습니다.
-
 ---
 
 ## 주요 기술 구현 요약
@@ -85,10 +83,18 @@
 [React] ⇄ [Nginx] ⇄ [Gunicorn + Django API] ⇄ [PostgreSQL]
 ↑
 (Crontab: 15분 주기 거래소 API 동기화)
-<img width="960" height="540" alt="아키텍쳐" src="https://github.com/user-attachments/assets/9d8faa5e-9dee-4060-be25-c60fa89186c9" />
-
+<div align="center">
+  <img width="960" height="540" alt="아키텍쳐" src="https://github.com/user-attachments/assets/9d8faa5e-9dee-4060-be25-c60fa89186c9" />
+</div>
 
 ---
+## ERD
+<div align="center">
+  <img width="512" height="404" alt="erd" src="https://github.com/user-attachments/assets/7e0001ff-7f6a-4b7d-8a95-3a1a67f335b7" />
+</div>
+
+---
+
 
 ## 주요 기능
 
@@ -121,7 +127,7 @@
 
 ## Docker Compose 설정
 
-```yaml
+```
 services:
   backend:
     build:
