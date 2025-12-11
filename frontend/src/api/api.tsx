@@ -1,10 +1,11 @@
-// const API_BASE_URL = import.meta.env.VITE_API_URL;
-const API_BASE_URL = 'http://localhost:8000';
+// const API_BASE = 'http://localhost:8000';
+const API_BASE = (import.meta as any).env?.VITE_API_BASE || '/api';
+
 
 // 헤더에 들어갈 카테고리를 API로부터 받아오는 로직 //1001
 export const fetchCategories = async () => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/categories/`);
+        const response = await fetch(`${API_BASE}/categories/`);
         if (!response.ok) {
             throw new Error('Network response was not ok : 1001');
         }
@@ -24,7 +25,7 @@ export const fetchGadiansPage = async (categoryId: number ,page: number): Promis
   next: string | null
 }> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/contents/?category_id=${categoryId}&page=${page}&ordering=-level`);
+    const response = await fetch(`${API_BASE}/contents/?category_id=${categoryId}&page=${page}&ordering=-level`);
     if (!response.ok) {
       throw new Error('Network response was not ok : 1002');
     }
@@ -43,7 +44,7 @@ export const fetchGadiansPage = async (categoryId: number ,page: number): Promis
 // 가디언id를 통해 가디언보상, 골드가치를 받아오는 로직 //1003
 export const fetchGadianRewards = async (gadianId: number)=>{
     try {
-        const response = await fetch(`${API_BASE_URL}/api/prices/?content_id=${gadianId}`);
+        const response = await fetch(`${API_BASE}/prices/?content_id=${gadianId}`);
         if (!response.ok) {
             throw new Error('Network response was not ok : 1003');
         }
@@ -59,7 +60,7 @@ export const fetchGadianRewards = async (gadianId: number)=>{
 // 검색한 아이템을 API로부터 받아오는 로직 //1004 #여차의 경우 페이지 추가
 export const searchItemAverage = async (itemName: string) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/search/?search_keyword=${encodeURIComponent(itemName)}`);
+        const response = await fetch(`${API_BASE}/search/?search_keyword=${encodeURIComponent(itemName)}`);
         if (!response.ok) {
             throw new Error('검색실패:1004');
         }
@@ -74,7 +75,7 @@ export const searchItemAverage = async (itemName: string) => {
 // 아이템 검색 시 자동완성 기능을 위한 API 호출 로직 //1005
 export const fetchItemSuggestions = async (keyword: string) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/autocomplete/?item_keyword=${encodeURIComponent(keyword)}`);
+    const response = await fetch(`${API_BASE}/autocomplete/?item_keyword=${encodeURIComponent(keyword)}`);
     if (!response.ok) {
       throw new Error('검색실패:1005');
     }
