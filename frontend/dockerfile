@@ -1,19 +1,19 @@
 # Build
 FROM node:18-alpine AS build
 WORKDIR /app
-
-# CRA 경고 에러 방지
 ENV CI=false
-
-# 네이티브 모듈 대비(필요 없으면 지워도 됨)
 RUN apk add --no-cache python3 make g++
 
-COPY package*.json ./
-RUN npm ci --no-audit --no-fund
+COPY package.json package-lock.json ./
+RUN if [ -f package-lock.json ]; then \
+      npm ci --no-audit --no-fund --legacy-peer-deps; \
+    else \
+      npm install --no-audit --no-fund --legacy-peer-deps; \
+    fi
 
 COPY . .
-RUN npm run build --loglevel verbose
+RUN npm run build --loglevel verbose  # → Vite가 /app/dist 생성
 
-# Serve (nginx)
+# Serve
 FROM nginx:1.27-alpine
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html

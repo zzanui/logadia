@@ -187,7 +187,7 @@ const ItemSearchPage = () => {
                     <tr className="bg-blue-50 text-gray-800">
                       <th className="w-1/4 border border-gray-400  text-left px-4 py-2">콘텐츠 이름</th>
                       <th className="w-1/4 border border-gray-400  text-left px-4 py-2">아이템 이름</th>
-                      <th className="w-1/6 border border-gray-400  text-center px-4 py-2">개수</th>
+                      <th className="w-1/6 border border-gray-400  text-center px-4 py-2">예상 획득 개수</th>
                       <th className="w-1/6 border border-gray-400  text-center px-4 py-2">귀속 여부</th>
                     </tr>
                   </thead>

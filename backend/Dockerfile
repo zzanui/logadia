@@ -1,4 +1,5 @@
-FROM python:3.12-slim
+# 더 많은 바이너리 휠이 준비된 3.11로 보수적으로 (3.12도 가능하지만 3.11이 실패 확률 낮음)
+FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -7,17 +8,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# 최신 툴체인
+# pip 툴체인 최신화
 RUN python -m pip install --upgrade pip setuptools wheel
 
-# 바이너리 휠 우선(apt 없이 설치)
-RUN pip install --only-binary=:all: --prefer-binary \
-    "psycopg[binary]>=3.1" \
-    "numpy>=2" \
-    "pandas>=2" \
-    "pillow>=10"
-
-# 나머지 의존성
+# 의존성 설치 (requirements.txt에는 psycopg[binary]로 교체되어 있어야 함)
 COPY requirements.txt .
 RUN pip install --prefer-binary -r requirements.txt
 

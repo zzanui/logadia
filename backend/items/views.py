@@ -65,7 +65,7 @@ class ContentItemPriceInfoView(APIView):
                     action_price = 0
                     total_price = 0
                 else: 
-                    # 3. 계산: 평균 개수 / 묶음 수 * 현재 최저가
+                    # 3. 계산: 평균 예상 획득 개수 / 묶음 수 * 현재 최저가
                     action_price = action.current_min_price
                     total_price = (avg.average_count / action.bundleCount) * action.current_min_price
 
@@ -111,6 +111,6 @@ class ItemAutoCompleteView(APIView):
         if not keyword:
             return Response([])
 
-        queryset = Item.objects.filter(ko_name__icontains=keyword)[:5]# 제한된 개수로 검색
+        queryset = Item.objects.filter(ko_name__icontains=keyword)[:5]# 제한된 예상 획득 개수로 검색
         serializer = ItemAutoCompleteSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)

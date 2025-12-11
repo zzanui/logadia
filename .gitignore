@@ -9,8 +9,7 @@
 # 환경 설정 파일
 .env
 
-# Node.
-insertDB/
+
 
 # Docker 관련
 docker-compose.override.yml
