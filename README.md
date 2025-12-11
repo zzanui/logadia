@@ -4,7 +4,6 @@
 > 개발기간: 2025.07 ~ 2025.09  
 > 참여인원: 1인  
 > 역할: 기획 · 설계 · 개발 · 배포 전 과정 담당  
-> **배포 URL:** [https://logadia.co.kr](https://logadia.co.kr)
 <img width="412" height="424" alt="1" src="https://github.com/user-attachments/assets/fca119f0-8b69-492f-941a-943bf2461540" />
 <img width="412" height="424" alt="2" src="https://github.com/user-attachments/assets/2b78c8d4-460a-413d-8bae-7cdc47763682" />
 
@@ -328,5 +327,3 @@ http {
 
 ---
 
-## 배포 URL
-https://logadia.co.kr
