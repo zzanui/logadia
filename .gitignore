@@ -12,7 +12,6 @@
 
 
 # Docker 관련
-docker-compose.override.yml
 .dockerignore
 
 

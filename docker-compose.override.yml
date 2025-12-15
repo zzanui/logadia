@@ -1,0 +1,42 @@
+services:
+  web:
+    env_file:
+      - .env.local
+    command: >
+      bash -lc "
+      python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
+      gunicorn config.wsgi:application --bind 0.0.0.0:8000 --reload --timeout 120 --workers 3 --threads 4
+      "
+    volumes:
+      # 🔥 로컬 Django 소스코드 → 컨테이너 /app 에 반영
+      - ./backend:/app
+      # 정적/미디어는 컨테이너 내부 관리
+      - static:/app/staticfiles
+      - media:/app/media
+    ports:
+      - "8000:8000"
+
+  frontend:
+    # 🔥 로컬 React 빌드 결과 또는 프런트 전체 폴더 반영
+    ports:
+    - "8080:80"
+    volumes:
+      # 로컬 nginx 설정
+      - ./frontend/dist:/usr/share/nginx/html
+      - ./nginx/nginx.local.conf:/etc/nginx/nginx.conf:ro
+      - static:/var/www/static:ro
+      - media:/var/www/media:ro
+
+  db:
+    # 🔥 로컬에서는 데이터 손상 방지 + 윈도우 mount 문제 때문에 named volume 사용 그대로
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  
+
+volumes:
+  static:
+  media:
+  pgdata:

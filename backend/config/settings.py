@@ -105,6 +105,8 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASSWORD'),
         'HOST': os.environ.get('DB_HOST'),
         'PORT': os.environ.get('DB_PORT'),
+        "CONN_MAX_AGE": 60,
+        "CONN_HEALTH_CHECKS": True
     }
 }
 
@@ -158,3 +160,28 @@ else:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+LOGGING = {
+    "version": 1,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django.db.backends": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+    },
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+CACHE_TTL = 60 * 5  # 5분

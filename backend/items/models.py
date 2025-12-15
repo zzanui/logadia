@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.indexes import GinIndex
 """
 # /아이템 모델/
 
@@ -13,8 +14,16 @@ class Item(models.Model):
     image = models.ImageField(upload_to='items/', blank=True, null=True)
     # search_keyword = models.CharField(max_length=100, blank=True, null=True)  # 검색 키워드
 
+    class Meta:
+        indexes = [
+            GinIndex(fields=['ko_name'], name='item_ko_name_trgm', opclasses=['gin_trgm_ops']),
+        ]
+
     def __str__(self):
         return f"{self.ko_name}"
+    
+    
+
 
 #카테고리
 class Category(models.Model):
@@ -56,7 +65,7 @@ class Content(models.Model):#콘텐츠로 변경 # 카테고리 추가
 
 # 가디언(외래키),
 # 아이템(외래키),
-# 아이템 예상 획득 개수,
+# 아이템 예상 획득 갯수,
 # 아이템 귀속여부
 # 생성일시,
 """
@@ -65,7 +74,7 @@ class ContentItemAverage(models.Model):
     content = models.ForeignKey(Content , on_delete=models.PROTECT)#콘텐츠로 변경
     item = models.ForeignKey(Item, on_delete=models.PROTECT)  
     item_name = models.CharField(max_length=50, blank=True, null=True)  # 아이템 이름
-    average_count = models.FloatField()  # 아이템 예상 획득 개수
+    average_count = models.FloatField()  # 아이템 예상 획득 갯수
     binding = models.BooleanField(default=False)  # 아이템 귀속여부
     date = models.DateField()  # 생성 일
 
@@ -75,7 +84,7 @@ class ContentItemAverage(models.Model):
         # 중복 저장되지 않도록 설정
         unique_together = ('content', 'item', 'binding', 'date')
         indexes = [
-            models.Index(fields=['date']),
+            models.Index(fields=["item", "date"], name="idx_avg_item_date"),
         ]
 
     def __str__(self):
@@ -88,7 +97,7 @@ class ContentItemAverage(models.Model):
 # 가디언(외래키),
 # 아이템(외래키),
 # 아이템 표기 이름,
-# 아이템 예상 획득 개수,
+# 아이템 예상 획득 갯수,
 # 아이템 귀속여부
 # 휴식 게이지,
 # 출처,
@@ -98,7 +107,7 @@ class ContentItemHistory(models.Model):
     content = models.ForeignKey(Content, on_delete=models.PROTECT)#가디언외래키
     item = models.ForeignKey(Item, on_delete=models.PROTECT)#아이템외래키
     item_name = models.CharField(max_length=50, blank=True, null=True)  # 아이템 표기 이름
-    count = models.IntegerField(default=0)#아이템 예상 획득 개수
+    count = models.IntegerField(default=0)#아이템 예상 획득 갯수
     binding = models.BooleanField(default=False)#아이템 귀속여부
     rest_gage = models.BooleanField(default=False)#휴식 게이지
     source = models.CharField(max_length=50, blank=True, null=True)#출처
