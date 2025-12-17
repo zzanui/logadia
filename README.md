@@ -79,11 +79,12 @@
 ## 시스템 아키텍처
 
 
-[React] ⇄ [Nginx] ⇄ [Gunicorn + Django API] ⇄ [PostgreSQL]
+[React] ⇄ [Nginx] ⇄ [Gunicorn + Django API] ⇄ [PostgreSQL], [redis]
 ↑
 (Crontab: 15분 주기 거래소 API 동기화)
 <div align="center">
-  <img width="960" height="540" alt="아키텍쳐" src="https://github.com/user-attachments/assets/9d8faa5e-9dee-4060-be25-c60fa89186c9" />
+  <img width="1548" height="802" alt="image" src="https://github.com/user-attachments/assets/7d38513a-c4ca-48da-a2e4-589c22155793" />
+
 </div>
 
 ---
