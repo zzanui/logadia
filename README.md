@@ -1,7 +1,7 @@
 # 로가디아 (Logadia)
 
 > **로스트아크 콘텐츠 보상 가치 확인 서비스**  
-> 개발기간: 2025.07 ~ 2025.09  
+> 개발기간: 2025.07 ~  
 > 참여인원: 1인  
 > 역할: 기획 · 설계 · 개발 · 배포 전 과정 담당  
 <img width="412" height="424" alt="1" src="https://github.com/user-attachments/assets/fca119f0-8b69-492f-941a-943bf2461540" />
